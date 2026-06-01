@@ -1,0 +1,16 @@
+{
+  "name": "burger-mania-retro-v2",
+  "version": "2.0.0",
+  "description": "Burger Mania Retro v2 — Scrum retrospective multiplayer game",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.16.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

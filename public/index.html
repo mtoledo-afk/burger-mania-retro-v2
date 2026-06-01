@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍔 Burger Mania Retro v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#C0392B; --red-d:#922B21; --red-l:#FADBD8;
+  --white:#FFFDF9; --off:#FDF2E9;
+  --gray:#F5F0EB; --gray2:#E8DDD4; --gray3:#B5A99A;
+  --text:#2C1810; --text2:#6B4C3B; --text3:#9E7B6A;
+  --green:#1A7A4A; --green-l:#D5F0E3;
+  --blue:#1A4F8A; --blue-l:#D6E8FF;
+  --amber:#B8750A; --amber-l:#FFF0CC;
+  --purple:#5B3FA0; --purple-l:#EDE8FF;
+  --teal:#0F6E5E; --teal-l:#D5F2EC;
+  --r:16px; --rsm:10px;
+  --shadow:0 2px 0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--white);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.logo{font-family:'Fredoka One',cursive;letter-spacing:.5px}
+
+/* ── Screens ── */
+.screen{display:none;max-width:700px;margin:0 auto;padding-bottom:2.5rem}
+.screen.active{display:block;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Restaurant Header ── */
+.rest-header{background:var(--red);padding:1.5rem 1.25rem 1rem;text-align:center;position:relative;border-bottom:4px solid var(--red-d)}
+.rest-header::before{content:'';position:absolute;bottom:-8px;left:0;right:0;height:4px;background:repeating-linear-gradient(90deg,var(--amber) 0,var(--amber) 20px,var(--red-d) 20px,var(--red-d) 40px)}
+.rest-header h1{font-family:'Fredoka One',cursive;font-size:28px;color:#fff;margin-bottom:2px}
+.rest-header p{font-size:13px;color:rgba(255,255,255,.85)}
+.header-actions{position:absolute;top:1rem;right:1rem;display:flex;gap:6px}
+
+/* ── Cards ── */
+.card{background:var(--white);border:2px solid var(--gray2);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:12px}
+.card-title{font-family:'Fredoka One',cursive;font-size:16px;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.card-red{border-color:var(--red);background:var(--red-l)}
+.card-green{border-color:var(--green);background:var(--green-l)}
+.card-amber{border-color:var(--amber);background:var(--amber-l)}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 20px;border-radius:var(--rsm);font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;border:2px solid transparent;transition:transform .1s,box-shadow .1s;text-decoration:none;white-space:nowrap}
+.btn:active{transform:translateY(2px)!important;box-shadow:none!important}
+.btn-red{background:var(--red);color:#fff;border-color:var(--red-d);box-shadow:0 3px 0 var(--red-d)}
+.btn-red:hover{background:#a93226}
+.btn-green{background:var(--green);color:#fff;border-color:#145c38;box-shadow:0 3px 0 #145c38}
+.btn-green:hover{background:#156038}
+.btn-outline{background:var(--white);color:var(--text);border-color:var(--gray2);box-shadow:0 3px 0 var(--gray2)}
+.btn-outline:hover{background:var(--gray)}
+.btn-amber{background:var(--amber);color:#fff;border-color:#8a5a08;box-shadow:0 3px 0 #8a5a08}
+.btn-purple{background:var(--purple);color:#fff;border-color:#3d2880;box-shadow:0 3px 0 #3d2880}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-block{width:100%}
+.btn-icon{padding:9px 13px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+
+/* ── Pills ── */
+.pill{display:inline-block;font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;letter-spacing:.3px}
+.p-red   {background:var(--red-l);   color:var(--red-d); border:1.5px solid #F5A99A}
+.p-green {background:var(--green-l); color:var(--green);  border:1.5px solid #8ED4B5}
+.p-blue  {background:var(--blue-l);  color:var(--blue);   border:1.5px solid #90B8F0}
+.p-amber {background:var(--amber-l); color:var(--amber);  border:1.5px solid #F0D080}
+.p-purple{background:var(--purple-l);color:var(--purple); border:1.5px solid #C4B5F4}
+.p-teal  {background:var(--teal-l);  color:var(--teal);   border:1.5px solid #80CCBC}
+
+/* ── Avatar ── */
+.av{display:flex;align-items:center;justify-content:center;border-radius:50%;font-family:'Fredoka One',cursive;font-weight:400;flex-shrink:0;border:2px solid rgba(0,0,0,.1)}
+.av-40{width:40px;height:40px;font-size:14px}
+.av-32{width:32px;height:32px;font-size:11px}
+.av-28{width:28px;height:28px;font-size:10px}
+.av-red   {background:var(--red-l);   color:var(--red-d)}
+.av-green {background:var(--green-l); color:var(--green)}
+.av-blue  {background:var(--blue-l);  color:var(--blue)}
+.av-amber {background:var(--amber-l); color:var(--amber)}
+.av-purple{background:var(--purple-l);color:var(--purple)}
+.av-teal  {background:var(--teal-l);  color:var(--teal)}
+
+/* ── Form ── */
+input[type=text],textarea,select{width:100%;padding:10px 13px;border:2px solid var(--gray2);border-radius:var(--rsm);font-family:'Nunito',sans-serif;font-size:14px;background:var(--white);color:var(--text);outline:none;transition:border-color .15s}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--red)}
+textarea{resize:vertical;min-height:72px;line-height:1.5}
+select{cursor:pointer}
+input[type=range]{width:100%;accent-color:var(--red)}
+label.field-label{font-size:12px;font-weight:800;color:var(--text2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+
+/* ── Conveyor ── */
+.conveyor{height:18px;background:repeating-linear-gradient(90deg,var(--gray) 0,var(--gray) 16px,var(--gray2) 16px,var(--gray2) 18px);border-radius:999px;border:2px solid var(--gray2);overflow:hidden;position:relative}
+.conv-fill{height:100%;border-radius:999px;transition:width 1s linear;position:relative}
+.conv-green{background:repeating-linear-gradient(90deg,var(--green) 0,var(--green) 14px,#145c38 14px,#145c38 18px)}
+.conv-amber{background:repeating-linear-gradient(90deg,var(--amber) 0,var(--amber) 14px,#8a5a08 14px,#8a5a08 18px)}
+.conv-red  {background:repeating-linear-gradient(90deg,var(--red) 0,var(--red) 14px,var(--red-d) 14px,var(--red-d) 18px);animation:shake .3s infinite}
+@keyframes shake{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+
+/* ── Timer ── */
+.timer-big{font-family:'Fredoka One',cursive;font-size:52px;color:var(--text);line-height:1;transition:color .3s}
+.timer-big.urgent{color:var(--red);animation:pulse .5s infinite alternate}
+@keyframes pulse{from{opacity:1}to{opacity:.6}}
+.timer-frozen{color:var(--blue)!important;animation:none!important}
+
+/* ── Ingredient cards ── */
+.ing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1rem}
+.ing-card{background:var(--white);border:2.5px solid var(--gray2);border-radius:var(--r);padding:12px;cursor:pointer;transition:border-color .15s,background .15s,transform .1s;position:relative;user-select:none;text-align:center}
+.ing-card:hover{border-color:var(--red);transform:translateY(-3px);box-shadow:0 4px 12px rgba(192,57,43,.15)}
+.ing-card:active{transform:translateY(0)}
+.ing-card.sel{border-color:var(--red);background:var(--red-l)}
+.ing-card .ie{font-size:28px;margin-bottom:4px}
+.ing-card .in{font-family:'Fredoka One',cursive;font-size:14px;color:var(--text)}
+.ing-card.sel .in{color:var(--red-d)}
+.chk{position:absolute;top:7px;right:7px;width:20px;height:20px;background:var(--red);border-radius:50%;display:none;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:900}
+.ing-card.sel .chk{display:flex}
+
+/* ── Burger preview layers ── */
+.bl{padding:6px 12px;border-radius:var(--rsm);font-size:13px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;animation:slideIn .2s ease}
+@keyframes slideIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+.bl-bun     {background:#FFF3CC;color:#7A5A00;border:1.5px solid #FFD966}
+.bl-liked   {background:var(--green-l);color:var(--green)}
+.bl-learned {background:var(--blue-l);color:var(--blue)}
+.bl-lacked  {background:var(--red-l);color:var(--red-d)}
+.bl-longed  {background:var(--amber-l);color:var(--amber)}
+.bl-start   {background:var(--green-l);color:var(--green)}
+.bl-stop    {background:var(--red-l);color:var(--red-d)}
+.bl-continue{background:var(--blue-l);color:var(--blue)}
+
+/* ── Scoreboard ── */
+.sb-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:2px dashed var(--gray2)}
+.sb-row:last-child{border-bottom:none}
+.sb-rank{font-family:'Fredoka One',cursive;font-size:22px;min-width:32px}
+.rank-1{color:var(--amber)}.rank-2{color:var(--gray3)}.rank-3{color:#8B5E3C}
+.sb-info{flex:1}.sb-name{font-weight:800;font-size:14px}.sb-meta{font-size:11px;color:var(--text3)}
+.sb-pts{font-family:'Fredoka One',cursive;font-size:22px;color:var(--red)}
+
+/* ── Progress tracker ── */
+.progress-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed var(--gray2)}
+.progress-row:last-child{border-bottom:none}
+.progress-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.dot-done{background:var(--green)}.dot-pending{background:var(--gray2)}
+
+/* ── Round badge ── */
+.round-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:999px;font-family:'Fredoka One',cursive;font-size:16px;border:2px solid}
+
+/* ── Phase label ── */
+.phase-bar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.ph{font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;border:2px solid var(--gray2);color:var(--text3);background:var(--gray);text-transform:uppercase;letter-spacing:.5px}
+.ph.active{background:var(--red-l);color:var(--red-d);border-color:var(--red)}
+.ph.done{background:var(--green-l);color:var(--green);border-color:var(--green)}
+
+/* ── Vote cards ── */
+.vote-card{border:2.5px solid var(--gray2);border-radius:var(--r);padding:12px;cursor:pointer;transition:border-color .15s,transform .1s;margin-bottom:10px;position:relative}
+.vote-card:hover{border-color:var(--red);transform:translateY(-2px)}
+.vote-card.voted{border-color:var(--red);background:var(--red-l);cursor:default;transform:none}
+.vote-card.my-own{opacity:.6;cursor:not-allowed}
+
+/* ── Reveal burger card ── */
+.reveal-card{background:var(--white);border:2.5px solid var(--gray2);border-radius:var(--r);padding:12px;margin-bottom:10px;animation:popIn .2s ease}
+.reveal-card.winner{border-color:var(--amber);background:var(--amber-l)}
+@keyframes popIn{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* ── Stats ── */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.stat-box{background:var(--gray);border:2px solid var(--gray2);border-radius:var(--rsm);padding:10px;text-align:center}
+.stat-val{font-family:'Fredoka One',cursive;font-size:24px;color:var(--text)}
+.stat-lbl{font-size:11px;color:var(--text3);font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+
+/* ── Tabs ── */
+.tab-bar{display:flex;background:var(--gray);border:2px solid var(--gray2);border-radius:var(--r);padding:4px;margin-bottom:14px;gap:3px}
+.tbtn{flex:1;text-align:center;padding:7px 6px;font-size:12px;font-weight:800;cursor:pointer;border-radius:12px;color:var(--text3);transition:background .15s,color .15s;white-space:nowrap}
+.tbtn.active{background:var(--white);color:var(--red);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+
+/* ── Team badge ── */
+.team-a{background:#FFF0CC;color:#B8750A;border:2px solid #F0D080;font-weight:800;padding:3px 10px;border-radius:999px;font-size:11px}
+.team-b{background:#D6E8FF;color:#1A4F8A;border:2px solid #90B8F0;font-weight:800;padding:3px 10px;border-radius:999px;font-size:11px}
+
+/* ── Power button ── */
+.power-btn{border:2.5px dashed var(--gray2);border-radius:var(--r);padding:10px 14px;cursor:pointer;transition:border-color .15s,background .15s;text-align:center;background:var(--gray)}
+.power-btn:hover{border-color:var(--red);background:var(--red-l)}
+.power-btn.used{opacity:.45;cursor:not-allowed;pointer-events:none}
+.power-em{font-size:24px;margin-bottom:4px}
+.power-name{font-family:'Fredoka One',cursive;font-size:14px;color:var(--text)}
+.power-desc{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.3}
+
+/* ── Freeze overlay ── */
+.freeze-overlay{display:none;position:fixed;inset:0;background:rgba(30,111,181,.85);z-index:999;align-items:center;justify-content:center;flex-direction:column;color:#fff;text-align:center;padding:1rem}
+.freeze-overlay.show{display:flex;animation:popIn .2s ease}
+.freeze-countdown{font-family:'Fredoka One',cursive;font-size:80px;line-height:1}
+
+/* ── Toast ── */
+.toast-area{position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;z-index:998;pointer-events:none}
+.toast{background:var(--text);color:#fff;padding:8px 18px;border-radius:999px;font-size:13px;font-weight:700;animation:toastIn .3s ease;white-space:nowrap;max-width:90vw}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Modal ── */
+.modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:997;align-items:center;justify-content:center;padding:1rem}
+.modal-wrap.show{display:flex}
+.modal{background:var(--white);border:2.5px solid var(--gray2);border-radius:var(--r);padding:2rem 1.5rem;max-width:400px;width:100%;text-align:center;box-shadow:0 8px 0 var(--gray2);animation:popIn .22s cubic-bezier(.34,1.56,.64,1)}
+.modal-em{font-size:52px;margin-bottom:8px}
+.modal-title{font-family:'Fredoka One',cursive;font-size:22px;margin-bottom:8px;color:var(--text)}
+.modal-body{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+.modal-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+
+/* ── QA Power target selector ── */
+.target-list{display:flex;flex-direction:column;gap:6px;text-align:left;margin-bottom:1rem}
+.target-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border:2px solid var(--gray2);border-radius:var(--rsm);cursor:pointer;transition:border-color .15s}
+.target-item:hover{border-color:var(--blue)}
+
+/* ── QEditor ── */
+.qe-section{margin-bottom:14px}
+.qe-header{font-size:12px;font-weight:800;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.qe-row{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.qe-row input{flex:1;font-size:13px}
+
+/* ── Splash ── */
+#s-splash{display:flex!important;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--red);text-align:center;padding:2rem;max-width:100%}
+.splash-logo{font-family:'Fredoka One',cursive;font-size:52px;color:#fff;margin-bottom:4px}
+.splash-sub{font-size:16px;color:rgba(255,255,255,.85);margin-bottom:2rem}
+.splash-quote{font-size:18px;font-weight:700;color:#fff;max-width:420px;line-height:1.5;margin-bottom:2.5rem;font-style:italic;opacity:.95}
+.splash-sprint{font-family:'Fredoka One',cursive;font-size:28px;color:#fff;margin-bottom:.5rem}
+
+/* ── End screen ── */
+.winner-hero{background:var(--red);border-radius:var(--r);padding:2rem 1.5rem;text-align:center;color:#fff;margin-bottom:12px}
+.winner-hero h2{font-family:'Fredoka One',cursive;font-size:26px;color:#fff;margin-bottom:4px}
+.winner-hero p{font-size:13px;opacity:.85}
+.role-winner-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:2px dashed var(--gray2)}
+.role-winner-row:last-child{border-bottom:none}
+
+/* ── Lobby specific ── */
+.player-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.player-row input{flex:1;min-width:0}
+.player-row select{width:148px;flex-shrink:0}
+
+/* ── Checkerboard decoration ── */
+.checker-bar{height:10px;background:repeating-linear-gradient(90deg,var(--red) 0,var(--red) 10px,#fff 10px,#fff 20px)}
+
+/* ── Conn status ── */
+.conn-dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px;flex-shrink:0}
+.c-ok{background:var(--green)}.c-err{background:var(--red)}.c-wait{background:var(--amber)}
+
+@media(max-width:500px){.stat-grid{grid-template-columns:repeat(2,1fr)}.tbtn{font-size:10px;padding:5px 4px}.ing-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- ════ FREEZE OVERLAY ════ -->
+<div class="freeze-overlay" id="freeze-overlay">
+  <div style="font-size:48px;margin-bottom:8px">❄️</div>
+  <div style="font-family:'Fredoka One',cursive;font-size:22px;margin-bottom:4px">¡Congelado!</div>
+  <div style="font-size:14px;opacity:.85;margin-bottom:16px" id="freeze-by"></div>
+  <div class="freeze-countdown" id="freeze-count">10</div>
+</div>
+
+<!-- ════ TOAST ════ -->
+<div class="toast-area" id="toast-area"></div>
+
+<!-- ════════════════════════════════
+     SPLASH
+════════════════════════════════ -->
+<div id="s-splash" class="screen active">
+  <div style="font-size:64px;margin-bottom:8px">🍔</div>
+  <div class="splash-sprint" id="splash-sprint-name">Burger Mania</div>
+  <div class="splash-sub">Retro Edition v2</div>
+  <div class="splash-quote" id="splash-quote">"El mejor Sprint es el que el equipo construye junto."</div>
+  <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px">
+    <button class="btn btn-outline" style="background:#fff;font-size:15px;padding:13px" onclick="goScreen('s-connect')">
+      Entrar al juego →
+    </button>
+  </div>
+  <div style="margin-top:2rem;font-size:12px;color:rgba(255,255,255,.55)">Scrum Retrospective · Powered by el equipo 🍕</div>
+</div>
+
+<!-- ════════════════════════════════
+     CONNECT
+════════════════════════════════ -->
+<div id="s-connect" class="screen">
+  <div class="checker-bar"></div>
+  <div class="rest-header">
+    <h1>🍔 Burger Mania Retro</h1>
+    <p>Retrospectiva Scrum — Edición Restaurante</p>
+  </div>
+  <div style="padding:1.25rem">
+    <div class="card" style="padding:.75rem 1rem;margin-bottom:10px">
+      <div style="font-size:12px;font-weight:700;color:var(--text3);display:flex;align-items:center">
+        <span class="conn-dot c-wait" id="conn-dot"></span>
+        <span id="conn-label">Conectando al servidor...</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">👤 Tu perfil</div>
+      <div style="margin-bottom:10px">
+        <label class="field-label">Tu nombre</label>
+        <input type="text" id="my-name" placeholder="Ej: Ana García" maxlength="20">
+      </div>
+      <label class="field-label">Tu rol en el equipo</label>
+      <select id="my-role">
+        <option value="dev">🔵 Developer</option>
+        <option value="qa">🟢 QA Engineer</option>
+        <option value="po">🟠 Product Owner</option>
+      </select>
+    </div>
+    <div class="card">
+      <div class="card-title">🎮 Crear sala (Host)</div>
+      <div style="margin-bottom:10px">
+        <label class="field-label">Nombre del Sprint</label>
+        <input type="text" id="sprint-name-in" placeholder="Ej: Sprint #12 — Módulo de pagos">
+      </div>
+      <button class="btn btn-red btn-block" onclick="createRoom()">▶ Crear sala</button>
+    </div>
+    <div class="card">
+      <div class="card-title">🔗 Unirse a una sala</div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="join-code" placeholder="Código de 4 letras" maxlength="4"
+          style="text-transform:uppercase;font-family:'Fredoka One',cursive;font-size:20px;letter-spacing:5px;text-align:center;flex:1">
+        <button class="btn btn-outline" onclick="joinRoom()">Unirse</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     LOBBY
+════════════════════════════════ -->
+<div id="s-lobby" class="screen">
+  <div class="checker-bar"></div>
+  <div class="rest-header">
+    <h1>🍴 Sala de espera</h1>
+    <p id="lobby-sprint-name">Sprint</p>
+  </div>
+  <div style="padding:1.25rem">
+    <div class="card" style="text-align:center;margin-bottom:10px">
+      <div style="font-size:12px;font-weight:800;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Comparte este código</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:56px;color:var(--red);letter-spacing:10px" id="room-code-disp">----</div>
+      <button class="btn btn-outline btn-sm" onclick="copyCode()">📋 Copiar enlace</button>
+    </div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-title">👥 Jugadores (<span id="player-count">0</span>/10)</div>
+      <div id="lobby-players"></div>
+    </div>
+    <!-- Teams preview -->
+    <div class="card" id="teams-card" style="display:none;margin-bottom:10px">
+      <div class="card-title">🎲 Equipos (asignados al azar)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <div class="team-a" style="display:inline-block;margin-bottom:6px">Equipo A 🍔</div>
+          <div id="team-a-list"></div>
+        </div>
+        <div>
+          <div class="team-b" style="display:inline-block;margin-bottom:6px">Equipo B 🌮</div>
+          <div id="team-b-list"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Question editor (host only) -->
+    <div id="host-q-editor" style="display:none;margin-bottom:10px">
+      <div class="card" style="border-color:var(--red);background:var(--red-l)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div class="card-title" style="margin-bottom:0;color:var(--red-d)">⚡ Editor de preguntas</div>
+          <button class="btn btn-sm btn-outline" onclick="toggleQEditor()" id="qe-toggle-btn">✏️ Editar</button>
+        </div>
+        <div style="font-size:12px;color:var(--red-d);margin-bottom:8px">Personaliza las preguntas según lo que pasó en este Sprint.</div>
+        <div id="qe-body" style="display:none">
+          <div id="qe-sections"></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="btn btn-red" style="flex:1" onclick="saveQuestions()">💾 Guardar</button>
+            <button class="btn btn-outline btn-sm" onclick="resetQuestions()">↺ Restaurar</button>
+          </div>
+          <div id="qe-saved" style="display:none;text-align:center;font-size:12px;color:var(--green);font-weight:800;margin-top:6px">✅ Guardado</div>
+        </div>
+      </div>
+    </div>
+    <!-- Host start -->
+    <div id="host-start-wrap" style="display:none">
+      <button class="btn btn-green btn-block" style="font-size:16px;padding:14px" onclick="startGame()">
+        ▶ Iniciar Burger Mania
+      </button>
+    </div>
+    <div id="wait-start" style="text-align:center;font-size:13px;color:var(--text3);padding:8px">
+      Esperando que el host inicie el juego...
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     PLAY
+════════════════════════════════ -->
+<div id="s-play" class="screen">
+  <div class="checker-bar"></div>
+  <div class="rest-header">
+    <h1 id="play-title">🍔 Sprint</h1>
+    <p id="play-sub">Construye tu burger antes de que la cinta termine</p>
+    <div class="header-actions">
+      <button class="btn btn-sm" onclick="goScreen('s-score')" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)">🏆</button>
+    </div>
+  </div>
+  <div style="padding:1rem 1.25rem 0">
+
+    <!-- Round badge -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div class="round-badge" id="round-badge">🍔 Ronda</div>
+      <div style="font-size:12px;font-weight:800;color:var(--text3)" id="round-counter">1 / 7</div>
+    </div>
+
+    <!-- Extra question banner -->
+    <div id="extra-q-banner" style="display:none;background:var(--amber-l);border:2px solid var(--amber);border-radius:var(--rsm);padding:10px 14px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:.5px">📣 Pregunta extra del PO</div>
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-top:3px" id="extra-q-text"></div>
+    </div>
+
+    <!-- Conveyor -->
+    <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">
+      <span>🎢 Cinta del Sprint</span><span id="conv-pct">0%</span>
+    </div>
+    <div class="conveyor" style="margin-bottom:14px">
+      <div class="conv-fill conv-green" id="conv-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-val timer-big" id="stat-timer">03:00</div>
+        <div class="stat-lbl">⏱ Tiempo</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="stat-my-pts">0pts</div>
+        <div class="stat-lbl">Mis pts</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="stat-delivered">0/0</div>
+        <div class="stat-lbl">Entregaron</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <div class="tbtn active" onclick="switchTab('t-ing',this)">🧀 Ingredientes</div>
+      <div class="tbtn" onclick="switchTab('t-burger',this)">🍔 Mi Burger</div>
+      <div class="tbtn" onclick="switchTab('t-prog',this)">👥 Progreso</div>
+      <div class="tbtn" onclick="switchTab('t-power',this)">⚡ Poder</div>
+    </div>
+
+    <!-- Tab: Ingredientes -->
+    <div id="t-ing">
+      <!-- Question card -->
+      <div class="card card-red" style="margin-bottom:12px">
+        <div style="font-size:11px;font-weight:800;color:var(--red-d);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Pregunta de esta ronda:</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);line-height:1.5" id="round-question">...</div>
+      </div>
+      <div class="ing-grid" id="ing-grid"></div>
+      <div style="margin-bottom:10px">
+        <label class="field-label">Tu comentario (obligatorio):</label>
+        <textarea id="comment-txt" placeholder="Escribe tu reflexión sobre este ingrediente..."></textarea>
+      </div>
+    </div>
+
+    <!-- Tab: Burger preview -->
+    <div id="t-burger" style="display:none">
+      <div class="card" style="background:var(--gray);margin-bottom:10px">
+        <div class="card-title">🍔 Tu burger del Sprint</div>
+        <div id="burger-preview"><div style="font-size:13px;color:var(--text3);font-style:italic">Sin ingredientes aún...</div></div>
+      </div>
+    </div>
+
+    <!-- Tab: Progreso del equipo -->
+    <div id="t-prog" style="display:none">
+      <div class="card">
+        <div class="card-title">👥 ¿Quién ya entregó?</div>
+        <div id="progress-list"><div style="font-size:13px;color:var(--text3);font-style:italic">Esperando datos...</div></div>
+      </div>
+    </div>
+
+    <!-- Tab: Poder especial -->
+    <div id="t-power" style="display:none">
+      <div class="card card-amber" style="margin-bottom:10px">
+        <div class="card-title" style="color:var(--amber)">⚡ Tu poder especial</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Tienes <strong>1 uso por partida</strong>. Úsalo estratégicamente.</div>
+        <div id="power-card"></div>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div style="display:flex;gap:8px;margin-top:12px;padding-bottom:1rem">
+      <button class="btn btn-green" style="flex:1" onclick="deliverBurger()" id="deliver-btn">🍔 Entregar burger</button>
+      <!-- Host controls -->
+      <div id="host-play-controls" style="display:none;display:flex;gap:6px">
+        <button class="btn btn-outline btn-icon" onclick="hostTimer('start')" id="timer-start-btn" title="Iniciar timer">▶</button>
+        <button class="btn btn-outline btn-icon" onclick="hostTimer('pause')" id="timer-pause-btn" title="Pausar timer" style="display:none">⏸</button>
+        <button class="btn btn-outline btn-icon" onclick="hostSkip()" title="Saltar a revelar">⏭</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     REVEAL
+════════════════════════════════ -->
+<div id="s-reveal" class="screen">
+  <div class="checker-bar"></div>
+  <div class="rest-header">
+    <h1>🗳️ Votar la mejor burger</h1>
+    <p id="reveal-round-label">Ronda: Liked</p>
+  </div>
+  <div style="padding:1.25rem">
+    <div style="font-size:13px;color:var(--text2);margin-bottom:4px">Las burgers están <strong>anónimas</strong> — vota la más completa y reflexiva.</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:14px">La ganadora recibe <strong>+3 pts</strong>. No puedes votar la tuya propia.</div>
+    <div style="font-size:12px;font-weight:800;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">
+      Votos: <span id="vote-count">0</span> / <span id="vote-total">0</span>
+    </div>
+    <div id="vote-list"></div>
+    <!-- Host next round -->
+    <div id="host-next-wrap" style="display:none;margin-top:14px">
+      <button class="btn btn-red btn-block" onclick="nextRound()">Siguiente ronda →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     SCOREBOARD
+════════════════════════════════ -->
+<div id="s-score" class="screen">
+  <div class="checker-bar"></div>
+  <div class="rest-header">
+    <h1>🏆 Scoreboard</h1>
+    <p id="score-sprint-sub">Sprint en curso</p>
+    <div class="header-actions">
+      <button class="btn btn-sm" onclick="goScreen('s-play')" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)">← Volver</button>
+    </div>
+  </div>
+  <div style="padding:1.25rem">
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-title">Individual</div>
+      <div id="score-rows"></div>
+    </div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-title">🎲 Equipos</div>
+      <div id="team-score-rows"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     END
+════════════════════════════════ -->
+<div id="s-end" class="screen">
+  <div class="checker-bar"></div>
+  <div style="padding:1.25rem">
+    <div class="winner-hero">
+      <div style="font-size:56px;margin-bottom:8px">🏆</div>
+      <h2 id="end-winner-name">¡Felicidades!</h2>
+      <p id="end-winner-sub"></p>
+    </div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-title">📊 Podium final</div>
+      <div id="end-podium"></div>
+    </div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-title">🥇 Ganador por rol</div>
+      <div id="end-by-role"></div>
+    </div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-title">🎲 Resultado por equipos</div>
+      <div id="end-teams"></div>
+    </div>
+    <div id="host-report-btn" style="display:none;margin-bottom:10px">
+      <button class="btn btn-red btn-block" style="font-size:15px;padding:13px" onclick="downloadReport()">
+        📄 Descargar reporte HTML
+      </button>
+    </div>
+    <button class="btn btn-outline btn-block" onclick="location.reload()">🔄 Nuevo Sprint</button>
+  </div>
+</div>
+
+<!-- ════ MODALS ════ -->
+<div class="modal-wrap" id="modal-delivered">
+  <div class="modal">
+    <div class="modal-em">🍔</div>
+    <div class="modal-title">¡Burger entregada!</div>
+    <div class="modal-body" id="md-delivered-body">Excelente trabajo.</div>
+    <div class="modal-actions">
+      <button class="btn btn-red" onclick="closeModal('modal-delivered')">¡Seguimos!</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="modal-timeout">
+  <div class="modal">
+    <div class="modal-em">⏰</div>
+    <div class="modal-title">¡Tiempo agotado!</div>
+    <div class="modal-body">El host pausó o finalizó el timer. Espera a que avance la ronda.</div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-timeout')">Ok</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="modal-vote-result">
+  <div class="modal">
+    <div class="modal-em">🏅</div>
+    <div class="modal-title">¡Votación cerrada!</div>
+    <div class="modal-body" id="md-vote-body">La burger ganadora es...</div>
+    <div class="modal-actions">
+      <button class="btn btn-red" onclick="closeModal('modal-vote-result')">Ver resultado</button>
+    </div>
+  </div>
+</div>
+
+<!-- QA power target modal -->
+<div class="modal-wrap" id="modal-qa-target">
+  <div class="modal">
+    <div class="modal-em">❄️</div>
+    <div class="modal-title">¿A quién congelar?</div>
+    <div class="modal-body">Elige el jugador que quedará congelado 10 segundos.</div>
+    <div class="target-list" id="qa-target-list"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-qa-target')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PO extra question modal -->
+<div class="modal-wrap" id="modal-po-q">
+  <div class="modal">
+    <div class="modal-em">📣</div>
+    <div class="modal-title">Agregar pregunta extra</div>
+    <div class="modal-body">Escribe la pregunta adicional para esta ronda. Todos la verán.</div>
+    <input type="text" id="po-q-input" placeholder="¿Qué pasó con el incidente del viernes?" style="margin-bottom:12px">
+    <div class="modal-actions">
+      <button class="btn btn-red" onclick="usePowerPO()">📣 Publicar pregunta</button>
+      <button class="btn btn-outline" onclick="closeModal('modal-po-q')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── CONFIG ── Cambia por tu URL de Render ───
+const WS_URL = 'wss://TU-PROYECTO.onrender.com';
+// ────────────────────────────────────────────
+
+const ROUNDS_META = [
+  { id:'liked',    label:'Liked',      emoji:'😊', phase:'4Ls', blCls:'bl-liked'   },
+  { id:'learned',  label:'Learned',    emoji:'📚', phase:'4Ls', blCls:'bl-learned' },
+  { id:'lacked',   label:'Lacked',     emoji:'😕', phase:'4Ls', blCls:'bl-lacked'  },
+  { id:'longed',   label:'Longed for', emoji:'⭐', phase:'4Ls', blCls:'bl-longed'  },
+  { id:'start',    label:'Start',      emoji:'🟢', phase:'SSC', blCls:'bl-start'   },
+  { id:'stop',     label:'Stop',       emoji:'🔴', phase:'SSC', blCls:'bl-stop'    },
+  { id:'continue', label:'Continue',   emoji:'🔵', phase:'SSC', blCls:'bl-continue'},
+];
+const ROLES = {
+  po:  { label:'Product Owner', pill:'p-amber',  av:'av-amber',  power:'Agregar pregunta extra a la ronda', powerEm:'📣' },
+  dev: { label:'Developer',     pill:'p-blue',   av:'av-blue',   power:'Saltar pregunta sin penalización',   powerEm:'⚡' },
+  qa:  { label:'QA Engineer',   pill:'p-green',  av:'av-green',  power:'Congelar a un jugador 10 segundos',  powerEm:'❄️' },
+};
+const AV_COLORS = ['av-red','av-blue','av-green','av-amber','av-purple','av-teal'];
+const DEFAULT_QUESTIONS = {
+  liked:    ['¿Qué fue lo que más disfrutaste de este Sprint?','¿Qué práctica del equipo destacarías esta vez?','¿Qué momento del Sprint te dio más satisfacción?'],
+  learned:  ['¿Qué aprendiste técnico o de proceso en este Sprint?','¿Qué conocimiento nuevo llevaste al equipo?','¿Qué cambiarías en tu forma de trabajar tras lo aprendido?'],
+  lacked:   ['¿Qué le faltó al equipo para entregar mejor?','¿Qué recurso o información te hizo falta?','¿Qué bloqueó tu trabajo sin que pudieras resolverlo?'],
+  longed:   ['¿Qué herramienta o práctica desearías haber tenido?','¿Qué proceso te hubiera ahorrado tiempo?','¿Qué apoyo externo necesitabas y no llegó?'],
+  start:    ['¿Qué debería empezar a hacer el equipo desde el próximo Sprint?','¿Qué práctica nueva propondrías implementar?','¿Qué hábito de trabajo te gustaría ver en el equipo?'],
+  stop:     ['¿Qué práctica actual le está costando tiempo o calidad al equipo?','¿Qué reunión o proceso eliminarías sin dudarlo?','¿Qué comportamiento del equipo frena la entrega?'],
+  continue: ['¿Qué práctica del equipo definitivamente debemos mantener?','¿Qué proceso está funcionando bien y no debemos romper?','¿Qué dinámica del equipo quieres que siga igual?'],
+};
+
+let ws = null, myId = null, myRole = null, isHost = false;
+let roomCode = '', sprintName = '';
+let players = {}, teams = {}, scores = {};
+let currentRound = null, roundIdx = 0, totalRounds = 7;
+let selectedIng = [], currentIngredients = [];
+let deliveredIds = [], allBurgers = [], roundBurgers = [];
+let timerSeconds = 180, hasDelivered = false, hasVoted = false;
+let powerUsed = false;
+let freezeInterval = null;
+let endData = null;
+
+// ─── WebSocket ───
+function init() {
+  ws = new WebSocket(WS_URL);
+  ws.onopen    = () => { setConn(true); send({ type:'get_splash' }); };
+  ws.onclose   = () => { setConn(false); setTimeout(init, 3000); };
+  ws.onerror   = () => setConn(false);
+  ws.onmessage = (e) => handleMsg(JSON.parse(e.data));
+  setInterval(() => { if (ws?.readyState===1) send({ type:'ping' }); }, 20000);
+}
+function setConn(ok) {
+  document.getElementById('conn-dot').className = 'conn-dot '+(ok?'c-ok':'c-err');
+  document.getElementById('conn-label').textContent = ok ? 'Conectado al servidor ✓' : 'Reconectando...';
+}
+function send(msg) { if (ws?.readyState===1) ws.send(JSON.stringify(msg)); }
+
+// ─── Message handler ───
+function handleMsg(msg) {
+  switch(msg.type) {
+    case 'splash':
+      document.getElementById('splash-quote').textContent = '"'+msg.quote+'"'; break;
+
+    case 'room_created':
+      myId = msg.playerId; isHost = true; roomCode = msg.code;
+      document.getElementById('room-code-disp').textContent = msg.code;
+      document.getElementById('host-start-wrap').style.display = 'block';
+      document.getElementById('host-q-editor').style.display = 'block';
+      document.getElementById('wait-start').style.display = 'none';
+      initQEditor();
+      goScreen('s-lobby'); break;
+
+    case 'joined':
+      myId = msg.playerId; isHost = false; roomCode = msg.code;
+      document.getElementById('room-code-disp').textContent = msg.code;
+      goScreen('s-lobby'); break;
+
+    case 'state':
+      players = msg.players || {};
+      teams = msg.teams || {};
+      scores = msg.scores || {};
+      sprintName = msg.sprintName || sprintName;
+      renderLobbyPlayers();
+      renderTeams(teams);
+      if (msg.phase === 'playing' && !document.getElementById('s-play').classList.contains('active')) {
+        startPlayScreen(msg);
+      }
+      if (msg.deliveredIds) {
+        deliveredIds = msg.deliveredIds;
+        updateDeliveryProgress();
+      }
+      break;
+
+    case 'game_started':
+      sprintName = msg.sprintName || sprintName;
+      document.getElementById('splash-sprint-name').textContent = sprintName;
+      break;
+
+    case 'tick':
+      timerSeconds = msg.seconds;
+      updateTimerUI(); updateConveyor(); break;
+
+    case 'timer_state':
+      if (isHost) {
+        document.getElementById('timer-start-btn').style.display = msg.running ? 'none' : 'flex';
+        document.getElementById('timer-pause-btn').style.display = msg.running ? 'flex' : 'none';
+      }
+      break;
+
+    case 'timer_ended':
+      toast('⏰ ¡Tiempo agotado!'); break;
+
+    case 'next_round':
+      currentRound = msg.round;
+      roundIdx = msg.roundIdx;
+      hasDelivered = false; hasVoted = false;
+      selectedIng = []; allBurgers = []; roundBurgers = [];
+      deliveredIds = [];
+      document.getElementById('extra-q-banner').style.display = 'none';
+      renderIngredients(currentIngredients);
+      updateRoundUI();
+      goScreen('s-play');
+      switchTab('t-ing', document.querySelectorAll('.tbtn')[0]);
+      break;
+
+    case 'delivery_progress':
+      deliveredIds = msg.deliveredIds;
+      updateDeliveryProgress();
+      document.getElementById('stat-delivered').textContent = msg.deliveredIds.length+'/'+msg.totalPlayers;
+      if (msg.playerName !== players[myId]?.name) toast(`🍔 ${msg.playerName} entregó su burger!`); break;
+
+    case 'round_complete':
+      roundBurgers = msg.burgers || [];
+      renderVoteList();
+      document.getElementById('reveal-round-label').textContent = 'Ronda: '+(currentRound?.label||'');
+      document.getElementById('vote-total').textContent = Object.keys(players).length;
+      document.getElementById('vote-count').textContent = '0';
+      if (isHost) document.getElementById('host-next-wrap').style.display = 'block';
+      goScreen('s-reveal'); break;
+
+    case 'vote_cast':
+      document.getElementById('vote-count').textContent = msg.totalVotes;
+      toast(`🗳️ ${msg.voterName} votó!`); break;
+
+    case 'vote_result':
+      scores = msg.scores || {};
+      const myScore = scores[myId];
+      if (myScore) document.getElementById('stat-my-pts').textContent = myScore.pts+'pts';
+      document.getElementById('md-vote-body').textContent = msg.winnerName
+        ? `🏅 La mejor burger fue de alguien del equipo — ¡+3 pts extra al ganador!`
+        : 'Empate — nadie recibe bonus.';
+      openModal('modal-vote-result');
+      // Reveal winner name after modal
+      setTimeout(()=>{ toast(`🏅 Mejor burger: ${msg.winnerName} (+3 pts!)`); }, 600);
+      break;
+
+    case 'game_ended':
+      endData = msg;
+      showEndScreen(msg); break;
+
+    case 'extra_question':
+      document.getElementById('extra-q-text').textContent = msg.question;
+      document.getElementById('extra-q-banner').style.display = 'block';
+      toast(`📣 ${msg.byName} agregó una pregunta extra!`); break;
+
+    case 'frozen':
+      applyFreeze(msg.seconds, msg.byName); break;
+
+    case 'power_used':
+      if (msg.playerId === myId) powerUsed = true;
+      renderPowerCard(); break;
+
+    case 'power_skip_ok':
+      toast('⚡ Pregunta saltada!'); break;
+
+    case 'questions_saved':
+      toast('💾 Preguntas guardadas'); break;
+
+    case 'toast': toast(msg.msg); break;
+    case 'error': alert(msg.msg); break;
+  }
+}
+
+// ─── Connection / Room ───
+function createRoom() {
+  const name = document.getElementById('my-name').value.trim();
+  const role = document.getElementById('my-role').value;
+  if (!name) { alert('Escribe tu nombre.'); return; }
+  myRole = role;
+  sprintName = document.getElementById('sprint-name-in').value.trim() || 'Sprint';
+  document.getElementById('lobby-sprint-name').textContent = sprintName;
+  document.getElementById('splash-sprint-name').textContent = sprintName;
+  send({ type:'create_room', name, role, sprintName });
+}
+function joinRoom() {
+  const name = document.getElementById('my-name').value.trim();
+  const role = document.getElementById('my-role').value;
+  const code = document.getElementById('join-code').value.trim().toUpperCase();
+  if (!name) { alert('Escribe tu nombre.'); return; }
+  if (code.length !== 4) { alert('El código debe tener 4 letras.'); return; }
+  myRole = role;
+  send({ type:'join_room', name, role, code });
+}
+function startGame() {
+  send({ type:'start_game', sprintName });
+}
+function copyCode() {
+  const url = `${location.origin}${location.pathname}?code=${roomCode}`;
+  navigator.clipboard.writeText(url).then(()=>toast('📋 Enlace copiado!')).catch(()=>toast('Código: '+roomCode));
+}
+
+// ─── Lobby ───
+function renderLobbyPlayers() {
+  const list = Object.values(players);
+  document.getElementById('player-count').textContent = list.length;
+  document.getElementById('lobby-players').innerHTML = list.map((p,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1.5px dashed var(--gray2)">
+      <div class="av av-40 ${AV_COLORS[i%AV_COLORS.length]}">${getInitials(p.name)}</div>
+      <div style="flex:1">
+        <div style="font-weight:800;font-size:13px">${p.name}${p.id===myId?' (tú)':''}</div>
+        <div style="font-size:11px;color:var(--text3)">${ROLES[p.role]?.label||p.role}</div>
+      </div>
+      <span class="pill ${ROLES[p.role]?.pill||'p-blue'}" style="font-size:10px">${ROLES[p.role]?.label||p.role}</span>
+    </div>
+  `).join('') || '<div style="font-size:13px;color:var(--text3);font-style:italic">Esperando jugadores...</div>';
+}
+function renderTeams(t) {
+  if (!t || (!t.A?.length && !t.B?.length)) return;
+  document.getElementById('teams-card').style.display = 'block';
+  ['A','B'].forEach(team=>{
+    const el = document.getElementById(`team-${team.toLowerCase()}-list`);
+    if (!el) return;
+    el.innerHTML = (t[team]||[]).map(id=>{
+      const p = players[id];
+      return p ? `<div style="font-size:13px;font-weight:700;padding:3px 0">${p.name} <span style="font-size:11px;color:var(--text3)">${ROLES[p.role]?.label||''}</span></div>` : '';
+    }).join('');
+  });
+}
+
+// ─── Play screen ───
+function startPlayScreen(state) {
+  currentRound = state.round || ROUNDS_META[0];
+  roundIdx = state.roundIdx || 0;
+  currentIngredients = state.ingredients || [];
+  timerSeconds = state.timerSeconds || 180;
+  hasDelivered = false; hasVoted = false;
+  document.getElementById('play-title').textContent = '🍔 '+sprintName;
+  document.getElementById('score-sprint-sub').textContent = sprintName;
+  if (state.question) document.getElementById('round-question').textContent = state.question;
+  if (isHost) {
+    document.getElementById('host-play-controls').style.display = 'flex';
+    document.getElementById('host-next-wrap').style.display = 'none';
+  }
+  renderIngredients(currentIngredients);
+  updateRoundUI();
+  renderPowerCard();
+  updateTimerUI();
+  updateConveyor();
+  goScreen('s-play');
+}
+function updateRoundUI() {
+  if (!currentRound) return;
+  const meta = ROUNDS_META.find(r=>r.id===currentRound.id) || ROUNDS_META[roundIdx];
+  document.getElementById('round-badge').textContent = `${meta?.emoji||'🍔'} ${currentRound.label||currentRound.id}`;
+  document.getElementById('round-badge').style.background = `var(--red-l)`;
+  document.getElementById('round-badge').style.borderColor = `var(--red)`;
+  document.getElementById('round-badge').style.color = `var(--red-d)`;
+  document.getElementById('round-counter').textContent = `${roundIdx+1} / ${totalRounds}`;
+  if (document.getElementById('round-question').textContent === '...' || !document.getElementById('round-question').textContent) return;
+}
+
+function renderIngredients(ings) {
+  currentIngredients = ings || [];
+  selectedIng = [];
+  const grid = document.getElementById('ing-grid');
+  if (!ings || !ings.length) { grid.innerHTML = '<div style="font-size:13px;color:var(--text3)">Cargando ingredientes...</div>'; return; }
+  grid.innerHTML = ings.map(ing=>`
+    <div class="ing-card" id="ic-${ing.id}" onclick="toggleIng('${ing.id}')">
+      <div class="ie">${ing.emoji}</div>
+      <div class="in">${ing.label}</div>
+      <div class="chk">✓</div>
+    </div>
+  `).join('');
+  renderBurger();
+}
+function toggleIng(id) {
+  if (hasDelivered) return;
+  const idx = selectedIng.indexOf(id);
+  if (idx >= 0) selectedIng.splice(idx,1);
+  else selectedIng.push(id);
+  document.getElementById('ic-'+id)?.classList.toggle('sel', selectedIng.includes(id));
+  renderBurger();
+}
+function renderBurger() {
+  const el = document.getElementById('burger-preview');
+  if (!selectedIng.length) { el.innerHTML='<div style="font-size:13px;color:var(--text3);font-style:italic">Sin ingredientes aún...</div>'; return; }
+  const meta = ROUNDS_META.find(r=>r.id===currentRound?.id)||{blCls:'bl-liked'};
+  let h = '<div class="bl bl-bun">🍞 Bun — User Story del Sprint</div>';
+  selectedIng.forEach(id=>{
+    const ing = currentIngredients.find(i=>i.id===id);
+    if (ing) h += `<div class="bl ${meta.blCls}">${ing.emoji} ${ing.label}</div>`;
+  });
+  h += '<div class="bl bl-bun">🍞 Bun — Commitment</div>';
+  el.innerHTML = h;
+}
+
+// ─── Timer ───
+function updateTimerUI() {
+  const m = Math.floor(timerSeconds/60), s = timerSeconds%60;
+  const el = document.getElementById('stat-timer');
+  el.textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  el.className = 'stat-val timer-big'+(timerSeconds<=30?' urgent':'');
+}
+function updateConveyor() {
+  const total = 180, elapsed = total - timerSeconds;
+  const pct = Math.min(100, Math.round((elapsed/total)*100));
+  const fill = document.getElementById('conv-fill');
+  fill.style.width = pct+'%';
+  document.getElementById('conv-pct').textContent = pct+'%';
+  fill.className = 'conv-fill '+(pct<60?'conv-green':pct<85?'conv-amber':'conv-red');
+}
+function hostTimer(action) { send({ type:'timer_control', action }); }
+function hostSkip() { if (confirm('¿Saltar a la votación ahora?')) send({ type:'host_skip_round' }); }
+
+// ─── Deliver ───
+function deliverBurger() {
+  if (hasDelivered) { toast('Ya entregaste tu burger esta ronda.'); return; }
+  if (!selectedIng.length) { alert('Selecciona al menos un ingrediente.'); return; }
+  const comment = document.getElementById('comment-txt').value.trim();
+  if (!comment) { alert('Escribe tu comentario — es obligatorio.'); document.getElementById('comment-txt').focus(); return; }
+  hasDelivered = true;
+  document.getElementById('deliver-btn').disabled = true;
+  const pts = 1 + selectedIng.length;
+  document.getElementById('md-delivered-body').textContent = `Burger entregada con ${selectedIng.length} ingrediente${selectedIng.length!==1?'s':''}. +${pts} puntos base. ¡Esperando a los demás!`;
+  openModal('modal-delivered');
+  send({ type:'deliver_burger', ingredients: selectedIng, comment });
+}
+
+// ─── Progress ───
+function updateDeliveryProgress() {
+  const el = document.getElementById('progress-list');
+  const list = Object.values(players);
+  el.innerHTML = list.map(p=>{
+    const done = deliveredIds.includes(p.id);
+    return `
+      <div class="progress-row">
+        <div class="progress-dot ${done?'dot-done':'dot-pending'}"></div>
+        <div class="av av-28 ${getAv(p.id)}">${getInitials(p.name)}</div>
+        <div style="flex:1;font-size:13px;font-weight:700">${p.name}${p.id===myId?' (tú)':''}</div>
+        <div style="font-size:12px;color:${done?'var(--green)':'var(--text3)'}">
+          ${done?'✅ Entregó':'⏳ Pendiente'}
+        </div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('stat-delivered').textContent = deliveredIds.length+'/'+list.length;
+}
+
+// ─── Vote ───
+function renderVoteList() {
+  const el = document.getElementById('vote-list');
+  hasVoted = false;
+  if (!roundBurgers.length) { el.innerHTML='<div style="font-size:13px;color:var(--text3);font-style:italic">No hay burgers para votar.</div>'; return; }
+  el.innerHTML = roundBurgers.map((b,i)=>`
+    <div class="vote-card ${b.playerId===myId?'my-own':''}" id="vc-${b.id}" onclick="castVote('${b.id}','${b.playerId}')">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--text)">Burger #${i+1}</div>
+        <div style="font-size:18px;font-weight:800;color:var(--red)" id="vote-count-${b.id}">${b.votes||0} 🗳️</div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">
+        ${(b.ingredients||[]).map(id=>{
+          const ing = currentIngredients.find(x=>x.id===id);
+          return ing ? `<span style="background:var(--gray);padding:3px 8px;border-radius:999px;font-size:11px;font-weight:700">${ing.emoji} ${ing.label}</span>` : '';
+        }).join('')}
+      </div>
+      ${b.comment?`<div style="font-size:12px;color:var(--text2);font-style:italic;line-height:1.4">"${b.comment.slice(0,150)}${b.comment.length>150?'...':''}"</div>`:''}
+      ${b.playerId===myId?`<div style="font-size:11px;color:var(--text3);margin-top:4px">← Esta es tu burger (no puedes votar la tuya)</div>`:''}
+    </div>
+  `).join('');
+}
+function castVote(burgerId, ownerId) {
+  if (ownerId === myId) { toast('No puedes votar tu propia burger.'); return; }
+  if (hasVoted) { toast('Ya votaste esta ronda.'); return; }
+  hasVoted = true;
+  document.getElementById('vc-'+burgerId)?.classList.add('voted');
+  send({ type:'vote', burgerId });
+  toast('🗳️ ¡Voto registrado!');
+}
+function nextRound() { send({ type:'next_round' }); }
+
+// ─── Scoreboard ───
+function renderScoreboard(s) {
+  s = s || scores;
+  const sorted = Object.values(s).sort((a,b)=>b.pts-a.pts);
+  const ranks=['🥇','🥈','🥉'];
+  const rCls=['rank-1','rank-2','rank-3'];
+  document.getElementById('score-rows').innerHTML = sorted.map((p,i)=>`
+    <div class="sb-row">
+      <div class="sb-rank ${rCls[i]||''}">${ranks[i]||i+1}</div>
+      <div class="av av-40 ${getAv2(p.name)}">${getInitials(p.name)}</div>
+      <div class="sb-info">
+        <div class="sb-name">${p.name}${p.name===players[myId]?.name?' (tú)':''}</div>
+        <div class="sb-meta">${ROLES[p.role]?.label||p.role} · ${p.burgers||0} burger${p.burgers!==1?'s':''} · <span class="${p.team==='A'?'':''}">Equipo ${p.team||'?'}</span></div>
+      </div>
+      <div class="sb-pts">${p.pts||0}pts</div>
+    </div>
+  `).join('');
+  // Team scores
+  const teamPts = {A:0,B:0};
+  sorted.forEach(p=>{ if(p.team) teamPts[p.team]=(teamPts[p.team]||0)+p.pts; });
+  document.getElementById('team-score-rows').innerHTML = `
+    <div class="sb-row">
+      <div style="font-size:22px">🍔</div>
+      <div class="sb-info"><div class="sb-name">Equipo A</div></div>
+      <div class="sb-pts">${teamPts.A}pts</div>
+    </div>
+    <div class="sb-row">
+      <div style="font-size:22px">🌮</div>
+      <div class="sb-info"><div class="sb-name">Equipo B</div></div>
+      <div class="sb-pts">${teamPts.B}pts</div>
+    </div>
+  `;
+}
+
+// ─── Power ───
+function renderPowerCard() {
+  const role = myRole || players[myId]?.role || 'dev';
+  const r = ROLES[role];
+  const el = document.getElementById('power-card');
+  el.innerHTML = `
+    <div class="power-btn ${powerUsed?'used':''}" onclick="activatePower()">
+      <div class="power-em">${r.powerEm}</div>
+      <div class="power-name">${r.power}</div>
+      <div class="power-desc">${powerUsed?'Ya usaste tu poder esta partida':'Toca para activar — 1 uso por partida'}</div>
+    </div>
+  `;
+}
+function activatePower() {
+  if (powerUsed) { toast('Ya usaste tu poder esta partida.'); return; }
+  const role = myRole || players[myId]?.role || 'dev';
+  if (role === 'dev') {
+    if (!confirm('¿Saltar la pregunta de esta ronda? Podrás entregar sin comentario.')) return;
+    send({ type:'use_power', role:'dev' });
+    powerUsed = true; renderPowerCard();
+    document.getElementById('comment-txt').removeAttribute('required');
+    toast('⚡ Poder activado: pregunta saltada!');
+  } else if (role === 'qa') {
+    const others = Object.values(players).filter(p=>p.id!==myId);
+    if (!others.length) { toast('No hay otros jugadores.'); return; }
+    document.getElementById('qa-target-list').innerHTML = others.map(p=>`
+      <div class="target-item" onclick="usePowerQA('${p.id}','${p.name}')">
+        <div class="av av-32 ${getAv(p.id)}">${getInitials(p.name)}</div>
+        <div style="font-weight:700">${p.name} <span style="font-size:11px;color:var(--text3)">${ROLES[p.role]?.label||''}</span></div>
+      </div>
+    `).join('');
+    openModal('modal-qa-target');
+  } else if (role === 'po') {
+    openModal('modal-po-q');
+  }
+}
+function usePowerQA(targetId, targetName) {
+  closeModal('modal-qa-target');
+  send({ type:'use_power', role:'qa', targetId });
+  powerUsed = true; renderPowerCard();
+  toast(`❄️ ¡Congelaste a ${targetName} por 10 seg!`);
+}
+function usePowerPO() {
+  const q = document.getElementById('po-q-input').value.trim();
+  if (!q) { alert('Escribe la pregunta.'); return; }
+  closeModal('modal-po-q');
+  send({ type:'use_power', role:'po', customQuestion: q });
+  powerUsed = true; renderPowerCard();
+  document.getElementById('po-q-input').value = '';
+}
+
+// ─── Freeze ───
+function applyFreeze(seconds, byName) {
+  document.getElementById('freeze-by').textContent = `${byName} te congeló`;
+  document.getElementById('freeze-count').textContent = seconds;
+  document.getElementById('freeze-overlay').classList.add('show');
+  let remaining = seconds;
+  if (freezeInterval) clearInterval(freezeInterval);
+  freezeInterval = setInterval(()=>{
+    remaining--;
+    document.getElementById('freeze-count').textContent = remaining;
+    if (remaining <= 0) {
+      clearInterval(freezeInterval);
+      document.getElementById('freeze-overlay').classList.remove('show');
+      toast('🔥 ¡Descongelado!');
+    }
+  },1000);
+}
+
+// ─── End screen ───
+function showEndScreen(data) {
+  const sorted = data.scores || [];
+  const byRole = data.byRole || {};
+  const w = sorted[0];
+  document.getElementById('end-winner-name').textContent = w ? `🏆 ${w.name} gana la Retro!` : '¡Partida terminada!';
+  document.getElementById('end-winner-sub').textContent = w ? `${ROLES[w.role]?.label||w.role} — ${w.pts} puntos` : '';
+  const ranks=['🥇','🥈','🥉'];
+  const rCls=['rank-1','rank-2','rank-3'];
+  document.getElementById('end-podium').innerHTML = sorted.slice(0,5).map((p,i)=>`
+    <div class="sb-row">
+      <div class="sb-rank ${rCls[i]||''}">${ranks[i]||i+1}</div>
+      <div class="av av-40 ${getAv2(p.name)}">${getInitials(p.name)}</div>
+      <div class="sb-info"><div class="sb-name">${p.name}</div><div class="sb-meta">${ROLES[p.role]?.label||p.role}</div></div>
+      <div class="sb-pts">${p.pts}pts</div>
+    </div>
+  `).join('');
+  // By role
+  document.getElementById('end-by-role').innerHTML = Object.entries(byRole).map(([role,p])=>`
+    <div class="role-winner-row">
+      <div style="font-size:20px">${ROLES[role]?.powerEm||'⭐'}</div>
+      <div class="av av-32 ${getAv2(p.name)}">${getInitials(p.name)}</div>
+      <div style="flex:1"><div style="font-weight:800;font-size:13px">${p.name}</div><div style="font-size:11px;color:var(--text3)">${ROLES[role]?.label||role}</div></div>
+      <div style="font-family:'Fredoka One',cursive;font-size:18px;color:var(--red)">${p.pts}pts</div>
+    </div>
+  `).join('');
+  // Teams
+  const teamPts = {A:0,B:0};
+  sorted.forEach(p=>{ if(p.team) teamPts[p.team]=(teamPts[p.team]||0)+p.pts; });
+  const teamWinner = teamPts.A >= teamPts.B ? 'A 🍔' : 'B 🌮';
+  document.getElementById('end-teams').innerHTML = `
+    <div style="text-align:center;font-family:'Fredoka One',cursive;font-size:18px;color:var(--red);margin-bottom:10px">Equipo ${teamWinner} gana!</div>
+    <div class="sb-row"><div style="font-size:20px">🍔</div><div class="sb-info"><div class="sb-name">Equipo A</div></div><div class="sb-pts">${teamPts.A}pts</div></div>
+    <div class="sb-row"><div style="font-size:20px">🌮</div><div class="sb-info"><div class="sb-name">Equipo B</div></div><div class="sb-pts">${teamPts.B}pts</div></div>
+  `;
+  if (isHost) document.getElementById('host-report-btn').style.display = 'block';
+  goScreen('s-end');
+}
+
+// ─── Report ───
+function downloadReport() {
+  if (!endData) return;
+  const d = endData;
+  const now = new Date().toLocaleDateString('es-GT',{year:'numeric',month:'long',day:'numeric'});
+  const sorted = d.scores || [];
+  const byRole = d.byRole || {};
+  const burgers = d.burgers || [];
+  const teamPts = {A:0,B:0};
+  sorted.forEach(p=>{ if(p.team) teamPts[p.team]=(teamPts[p.team]||0)+p.pts; });
+
+  // Group burgers by round
+  const byRound = {};
+  burgers.forEach(b=>{ if(!byRound[b.roundId]) byRound[b.roundId]=[]; byRound[b.roundId].push(b); });
+
+  // Generate Action Items as User Stories
+  const actionItems = (byRound['start']||[]).map((b,i)=>`
+    <div style="background:#F0FFF4;border:1px solid #9FD4B5;border-radius:8px;padding:12px;margin-bottom:8px">
+      <div style="font-weight:700;font-size:13px;color:#1A7A4A">User Story #${i+1}</div>
+      <div style="font-size:14px;margin:4px 0"><strong>Como</strong> equipo Scrum, <strong>quiero</strong> ${b.comment||b.ingredients?.join(', ')||'mejorar nuestro proceso'} <strong>para</strong> entregar mejor en el próximo Sprint.</div>
+      <div style="font-size:11px;color:#6B8F71;margin-top:4px"><strong>AC:</strong> El equipo revisa esta mejora en la próxima Retro y puede confirmar si fue implementada.</div>
+      <div style="font-size:11px;color:#999;margin-top:2px">Por: ${b.playerName} (${ROLES[b.playerRole]?.label||b.playerRole})</div>
+    </div>
+  `).join('');
+
+  const roundsHtml = ROUNDS_META.map(r=>{
+    const rb = byRound[r.id] || [];
+    if (!rb.length) return '';
+    return `
+      <div style="margin-bottom:20px">
+        <h3 style="font-size:16px;color:#C0392B;margin-bottom:10px;border-bottom:2px solid #FADBD8;padding-bottom:6px">${r.emoji} ${r.label}</h3>
+        ${rb.map(b=>`
+          <div style="background:#FFF9F7;border:1px solid #E8DDD4;border-radius:8px;padding:10px;margin-bottom:8px">
+            <div style="font-weight:700;font-size:13px">${b.playerName} <span style="font-size:11px;color:#9E7B6A;font-weight:400">${ROLES[b.playerRole]?.label||b.playerRole} · Equipo ${b.playerTeam||'?'}</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin:6px 0">
+              ${(b.ingredients||[]).map(id=>{
+                const found = currentIngredients.find(x=>x.id===id);
+                return `<span style="background:#FADBD8;color:#C0392B;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700">${found?found.emoji+' '+found.label:id}</span>`;
+              }).join('')}
+            </div>
+            ${b.comment?`<div style="font-size:12px;color:#6B4C3B;font-style:italic">"${b.comment}"</div>`:''}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }).join('');
+
+  const html = `<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><title>Reporte — ${d.sprintName}</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Nunito',sans-serif;background:#FFFDF9;color:#2C1810;max-width:800px;margin:0 auto;padding:2rem;font-size:15px}
+  h1,h2,h3{font-family:'Fredoka One',cursive}
+  .header{background:#C0392B;color:#fff;padding:2rem;border-radius:12px;margin-bottom:1.5rem;text-align:center}
+  .header h1{font-size:32px;color:#fff;margin-bottom:4px}
+  .header p{opacity:.85;font-size:14px}
+  .section{background:#fff;border:2px solid #E8DDD4;border-radius:12px;padding:1.5rem;margin-bottom:1.5rem}
+  .section h2{font-size:20px;color:#C0392B;margin-bottom:1rem;border-bottom:2px solid #FADBD8;padding-bottom:8px}
+  .sb-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed #E8DDD4}
+  .sb-row:last-child{border-bottom:none}
+  .pts{font-family:'Fredoka One',cursive;font-size:20px;color:#C0392B}
+  .checker{height:10px;background:repeating-linear-gradient(90deg,#C0392B 0,#C0392B 10px,#fff 10px,#fff 20px);margin-bottom:1.5rem;border-radius:999px}
+  @media print{body{max-width:100%}.no-print{display:none}}
+</style>
+</head><body>
+  <div class="header">
+    <div style="font-size:48px;margin-bottom:8px">🍔</div>
+    <h1>Burger Mania Retro</h1>
+    <p>${d.sprintName} · ${now}</p>
+    <p>Participantes: ${sorted.map(p=>p.name).join(', ')}</p>
+  </div>
+  <div class="checker"></div>
+
+  <div class="section">
+    <h2>🏆 Ganador de la Retro</h2>
+    <div style="text-align:center;padding:1rem">
+      <div style="font-size:48px">🏆</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:24px;color:#C0392B">${sorted[0]?.name}</div>
+      <div style="font-size:14px;color:#9E7B6A">${ROLES[sorted[0]?.role]?.label||''} — ${sorted[0]?.pts} puntos</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>📊 Scoreboard final</h2>
+    ${sorted.map((p,i)=>`
+      <div class="sb-row">
+        <div style="font-size:20px">${['🥇','🥈','🥉'][i]||i+1}</div>
+        <div style="flex:1"><div style="font-weight:800">${p.name}</div><div style="font-size:11px;color:#9E7B6A">${ROLES[p.role]?.label||p.role} · Equipo ${p.team||'?'}</div></div>
+        <div class="pts">${p.pts}pts</div>
+      </div>
+    `).join('')}
+  </div>
+
+  <div class="section">
+    <h2>🥇 Ganador por rol</h2>
+    ${Object.entries(byRole).map(([role,p])=>`
+      <div class="sb-row">
+        <div style="font-size:20px">${ROLES[role]?.powerEm||'⭐'}</div>
+        <div style="flex:1"><div style="font-weight:800">${p.name}</div><div style="font-size:11px;color:#9E7B6A">${ROLES[role]?.label||role}</div></div>
+        <div class="pts">${p.pts}pts</div>
+      </div>
+    `).join('')}
+  </div>
+
+  <div class="section">
+    <h2>🎲 Resultado por equipos</h2>
+    <div class="sb-row"><div style="font-size:20px">🍔</div><div style="flex:1;font-weight:800">Equipo A</div><div class="pts">${teamPts.A}pts</div></div>
+    <div class="sb-row"><div style="font-size:20px">🌮</div><div style="flex:1;font-weight:800">Equipo B</div><div class="pts">${teamPts.B}pts</div></div>
+    <div style="text-align:center;font-family:'Fredoka One',cursive;font-size:18px;color:#C0392B;margin-top:10px">
+      Ganador: Equipo ${teamPts.A>=teamPts.B?'A 🍔':'B 🌮'}
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>💡 Respuestas por ronda</h2>
+    ${roundsHtml}
+  </div>
+
+  ${actionItems ? `
+  <div class="section">
+    <h2>📋 Action Items como User Stories</h2>
+    <p style="font-size:13px;color:#9E7B6A;margin-bottom:12px">Generados a partir de los compromisos Start del equipo.</p>
+    ${actionItems}
+  </div>` : ''}
+
+  <div style="text-align:center;font-size:12px;color:#B5A99A;margin-top:2rem">
+    Reporte generado por Burger Mania Retro v2 · ${now}
+  </div>
+  <div class="no-print" style="text-align:center;margin-top:1rem">
+    <button onclick="window.print()" style="background:#C0392B;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">🖨️ Imprimir / Guardar PDF</button>
+  </div>
+</body></html>`;
+
+  const blob = new Blob([html], { type:'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `retro-${d.sprintName?.replace(/\s+/g,'-')||'sprint'}-${Date.now()}.html`;
+  a.click();
+  toast('📄 Reporte descargado!');
+}
+
+// ─── Question Editor ───
+let qEditorOpen = false;
+function toggleQEditor() {
+  qEditorOpen = !qEditorOpen;
+  document.getElementById('qe-body').style.display = qEditorOpen ? 'block' : 'none';
+  document.getElementById('qe-toggle-btn').textContent = qEditorOpen ? '✕ Cerrar' : '✏️ Editar';
+}
+function initQEditor() {
+  const sec = document.getElementById('qe-sections');
+  sec.innerHTML = ROUNDS_META.map(r=>`
+    <div class="qe-section">
+      <div class="qe-header">${r.emoji} ${r.label}</div>
+      <div id="qe-${r.id}">
+        ${DEFAULT_QUESTIONS[r.id].map(q=>`
+          <div class="qe-row">
+            <input type="text" value="${q.replace(/"/g,'&quot;')}">
+            <button class="btn btn-sm btn-outline" onclick="this.parentElement.remove()">✕</button>
+          </div>
+        `).join('')}
+      </div>
+      <button class="btn btn-sm btn-outline" style="margin-top:4px" onclick="addQRow('${r.id}')">+ Agregar</button>
+    </div>
+  `).join('');
+}
+function addQRow(id) {
+  const row = document.createElement('div');
+  row.className = 'qe-row';
+  row.innerHTML = `<input type="text" placeholder="Tu pregunta personalizada..."><button class="btn btn-sm btn-outline" onclick="this.parentElement.remove()">✕</button>`;
+  document.getElementById('qe-'+id).appendChild(row);
+}
+function saveQuestions() {
+  const q = {};
+  ROUNDS_META.forEach(r=>{
+    const inputs = document.querySelectorAll(`#qe-${r.id} .qe-row input`);
+    q[r.id] = Array.from(inputs).map(i=>i.value.trim()).filter(Boolean);
+  });
+  send({ type:'update_questions', questions:q });
+  document.getElementById('qe-saved').style.display='block';
+  setTimeout(()=>document.getElementById('qe-saved').style.display='none',2500);
+}
+function resetQuestions() {
+  initQEditor();
+  toast('↺ Restaurado a defaults');
+}
+
+// ─── Utils ───
+function getInitials(name) { return (name||'?').trim().split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)||'?'; }
+function getAv(id) { const keys=Object.keys(players); return AV_COLORS[keys.indexOf(id)%AV_COLORS.length]||'av-red'; }
+function getAv2(name) { const keys=Object.values(players).map(p=>p.name); return AV_COLORS[keys.indexOf(name)%AV_COLORS.length]||'av-red'; }
+function goScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id==='s-score') renderScoreboard();
+}
+function switchTab(id, btn) {
+  ['t-ing','t-burger','t-prog','t-power'].forEach(t=>{ const el=document.getElementById(t); if(el) el.style.display=t===id?'block':'none'; });
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  if (id==='t-burger') renderBurger();
+  if (id==='t-prog') updateDeliveryProgress();
+  if (id==='t-power') renderPowerCard();
+}
+function openModal(id)  { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function toast(msg) {
+  const el = document.createElement('div');
+  el.className='toast'; el.textContent=msg;
+  document.getElementById('toast-area').appendChild(el);
+  setTimeout(()=>el.remove(), 3200);
+}
+
+// Auto-fill code from URL
+const urlCode = new URLSearchParams(location.search).get('code');
+if (urlCode) { document.getElementById('join-code').value = urlCode.toUpperCase(); }
+
+init();
+</script>
+</body>
+</html>
