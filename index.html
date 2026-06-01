@@ -750,9 +750,16 @@ function handleMsg(msg) {
       hasDelivered = false; hasVoted = false;
       selectedIng = []; allBurgers = []; roundBurgers = [];
       deliveredIds = [];
+      // Update ingredients and question from server
+      if (msg.ingredients) currentIngredients = msg.ingredients;
+      if (msg.question) document.getElementById('round-question').textContent = msg.question;
+      // Clear comment textarea and deliver button
+      document.getElementById('comment-txt').value = '';
+      document.getElementById('deliver-btn').disabled = false;
       document.getElementById('extra-q-banner').style.display = 'none';
       renderIngredients(currentIngredients);
       updateRoundUI();
+      updateDeliveryProgress();
       goScreen('s-play');
       switchTab('t-ing', document.querySelectorAll('.tbtn')[0]);
       break;

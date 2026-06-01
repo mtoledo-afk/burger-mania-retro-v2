@@ -390,7 +390,7 @@ wss.on('connection', (ws) => {
           const roundId = ROUNDS[room.roundIdx].id;
           const qBank = room.customQuestions[roundId]?.length ? room.customQuestions[roundId] : DEFAULT_QUESTIONS[roundId];
           room.currentQuestion = qBank[Math.floor(Math.random() * qBank.length)];
-          broadcastAll(room, { type: 'next_round', roundIdx: room.roundIdx, round: ROUNDS[room.roundIdx] });
+          broadcastAll(room, { type: 'next_round', roundIdx: room.roundIdx, round: ROUNDS[room.roundIdx], ingredients: INGREDIENTS[ROUNDS[room.roundIdx].id] || [], question: room.currentQuestion });
           broadcastAll(room, roomState(room));
         }
         break;
