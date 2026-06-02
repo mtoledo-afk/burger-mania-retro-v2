@@ -433,11 +433,16 @@ label.field-label{font-size:12px;font-weight:800;color:var(--text2);display:bloc
       </div>
     </div>
 
+    <!-- Progress inline — always visible -->
+    <div style="background:var(--gray);border:2px solid var(--gray2);border-radius:var(--rsm);padding:8px 12px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">👥 ¿Quién ya entregó?</div>
+      <div id="progress-list-inline" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+    </div>
+
     <!-- Tabs -->
     <div class="tab-bar">
       <div class="tbtn active" onclick="switchTab('t-ing',this)">🧀 Ingredientes</div>
       <div class="tbtn" onclick="switchTab('t-burger',this)">🍔 Mi Burger</div>
-      <div class="tbtn" onclick="switchTab('t-prog',this)">👥 Progreso</div>
       <div class="tbtn" onclick="switchTab('t-power',this)">⚡ Poder</div>
     </div>
 
@@ -463,14 +468,6 @@ label.field-label{font-size:12px;font-weight:800;color:var(--text2);display:bloc
       </div>
     </div>
 
-    <!-- Tab: Progreso del equipo -->
-    <div id="t-prog" style="display:none">
-      <div class="card">
-        <div class="card-title">👥 ¿Quién ya entregó?</div>
-        <div id="progress-list"><div style="font-size:13px;color:var(--text3);font-style:italic">Esperando datos...</div></div>
-      </div>
-    </div>
-
     <!-- Tab: Poder especial -->
     <div id="t-power" style="display:none">
       <div class="card card-amber" style="margin-bottom:10px">
@@ -484,7 +481,7 @@ label.field-label{font-size:12px;font-weight:800;color:var(--text2);display:bloc
     <div style="display:flex;gap:8px;margin-top:12px;padding-bottom:1rem">
       <button class="btn btn-green" style="flex:1" onclick="deliverBurger()" id="deliver-btn">🍔 Entregar burger</button>
       <!-- Host controls -->
-      <div id="host-play-controls" style="display:none;display:flex;gap:6px">
+      <div id="host-play-controls" style="display:none;gap:6px">
         <button class="btn btn-outline btn-icon" onclick="hostTimer('start')" id="timer-start-btn" title="Iniciar timer">▶</button>
         <button class="btn btn-outline btn-icon" onclick="hostTimer('pause')" id="timer-pause-btn" title="Pausar timer" style="display:none">⏸</button>
         <button class="btn btn-outline btn-icon" onclick="hostSkip()" title="Saltar a revelar">⏭</button>
@@ -745,7 +742,6 @@ function handleMsg(msg) {
       toast('⏰ ¡Tiempo agotado!'); break;
 
     case 'next_round':
-      console.log('[next_round] recibido:', msg);
       currentRound = msg.round;
       roundIdx = msg.roundIdx;
       hasDelivered = false; hasVoted = false;
@@ -755,14 +751,15 @@ function handleMsg(msg) {
       if (msg.ingredients) currentIngredients = msg.ingredients;
       // Always update question — force clear even if msg.question is missing
       document.getElementById('round-question').textContent = msg.question || '...';
-      console.log('[next_round] pregunta nueva:', msg.question);
       // Clear comment textarea and deliver button
       document.getElementById('comment-txt').value = '';
       document.getElementById('deliver-btn').disabled = false;
       document.getElementById('extra-q-banner').style.display = 'none';
       renderIngredients(currentIngredients);
       updateRoundUI();
-      updateDeliveryProgress();
+      updateProgressInline();
+      // Auto-start timer
+      if (isHost) setTimeout(() => send({ type:'timer_control', action:'start' }), 800);
       goScreen('s-play');
       switchTab('t-ing', document.querySelectorAll('.tbtn')[0]);
       break;
@@ -770,6 +767,7 @@ function handleMsg(msg) {
     case 'delivery_progress':
       deliveredIds = msg.deliveredIds;
       updateDeliveryProgress();
+      updateProgressInline();
       document.getElementById('stat-delivered').textContent = msg.deliveredIds.length+'/'+msg.totalPlayers;
       if (msg.playerName !== players[myId]?.name) toast(`🍔 ${msg.playerName} entregó su burger!`); break;
 
@@ -894,6 +892,8 @@ function startPlayScreen(state) {
   if (isHost) {
     document.getElementById('host-play-controls').style.display = 'flex';
     document.getElementById('host-next-wrap').style.display = 'none';
+    // Auto-start timer when round begins
+    setTimeout(() => send({ type:'timer_control', action:'start' }), 800);
   }
   renderIngredients(currentIngredients);
   updateRoundUI();
@@ -982,22 +982,22 @@ function deliverBurger() {
 
 // ─── Progress ───
 function updateDeliveryProgress() {
-  const el = document.getElementById('progress-list');
   const list = Object.values(players);
-  el.innerHTML = list.map(p=>{
-    const done = deliveredIds.includes(p.id);
-    return `
-      <div class="progress-row">
-        <div class="progress-dot ${done?'dot-done':'dot-pending'}"></div>
-        <div class="av av-28 ${getAv(p.id)}">${getInitials(p.name)}</div>
-        <div style="flex:1;font-size:13px;font-weight:700">${p.name}${p.id===myId?' (tú)':''}</div>
-        <div style="font-size:12px;color:${done?'var(--green)':'var(--text3)'}">
-          ${done?'✅ Entregó':'⏳ Pendiente'}
-        </div>
-      </div>
-    `;
-  }).join('');
   document.getElementById('stat-delivered').textContent = deliveredIds.length+'/'+list.length;
+  updateProgressInline();
+}
+function updateProgressInline() {
+  const el = document.getElementById('progress-list-inline');
+  if (!el) return;
+  const list = Object.values(players);
+  el.innerHTML = list.map(p => {
+    const done = deliveredIds.includes(p.id);
+    return `<div style="display:flex;align-items:center;gap:4px;background:${done?'var(--green-l)':'var(--white)'};border:1.5px solid ${done?'var(--green)':'var(--gray2)'};border-radius:999px;padding:3px 10px 3px 6px">
+      <div style="width:8px;height:8px;border-radius:50%;background:${done?'var(--green)':'var(--gray2)'}"></div>
+      <span style="font-size:12px;font-weight:700;color:${done?'var(--green)':'var(--text3)'}">${p.name}${p.id===myId?' (tú)':''}</span>
+      <span style="font-size:11px">${done?'✅':'⏳'}</span>
+    </div>`;
+  }).join('');
 }
 
 // ─── Vote ───
@@ -1370,11 +1370,11 @@ function goScreen(id) {
   if (id==='s-score') renderScoreboard();
 }
 function switchTab(id, btn) {
-  ['t-ing','t-burger','t-prog','t-power'].forEach(t=>{ const el=document.getElementById(t); if(el) el.style.display=t===id?'block':'none'; });
+  ['t-ing','t-burger','t-power'].forEach(t=>{ const el=document.getElementById(t); if(el) el.style.display=t===id?'block':'none'; });
   document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   if (id==='t-burger') renderBurger();
-  if (id==='t-prog') updateDeliveryProgress();
+
   if (id==='t-power') renderPowerCard();
 }
 function openModal(id)  { document.getElementById(id).classList.add('show'); }
