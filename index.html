@@ -635,7 +635,7 @@ label.field-label{font-size:12px;font-weight:800;color:var(--text2);display:bloc
 
 <script>
 // ─── CONFIG ── Cambia por tu URL de Render ───
-const WS_URL = 'https://burger-mania-retro-v2.onrender.com';
+const WS_URL = 'wss://TU-PROYECTO.onrender.com';
 // ────────────────────────────────────────────
 
 const ROUNDS_META = [
@@ -745,6 +745,7 @@ function handleMsg(msg) {
       toast('⏰ ¡Tiempo agotado!'); break;
 
     case 'next_round':
+      console.log('[next_round] recibido:', msg);
       currentRound = msg.round;
       roundIdx = msg.roundIdx;
       hasDelivered = false; hasVoted = false;
@@ -752,7 +753,9 @@ function handleMsg(msg) {
       deliveredIds = [];
       // Update ingredients and question from server
       if (msg.ingredients) currentIngredients = msg.ingredients;
-      if (msg.question) document.getElementById('round-question').textContent = msg.question;
+      // Always update question — force clear even if msg.question is missing
+      document.getElementById('round-question').textContent = msg.question || '...';
+      console.log('[next_round] pregunta nueva:', msg.question);
       // Clear comment textarea and deliver button
       document.getElementById('comment-txt').value = '';
       document.getElementById('deliver-btn').disabled = false;
